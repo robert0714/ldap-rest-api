@@ -7,6 +7,7 @@ import java.util.Optional;
 import javax.naming.InvalidNameException;
 import javax.naming.Name;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.support.LdapUtils;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,9 @@ public class UserService {
 	private UserRepository userRepository;
 
 	public User create(User user) throws InvalidNameException {
-		if (user.getDn() == null)
-			user.setDn(LdapUtils.emptyLdapName().add("uid=" + user.getUid()));
+		if (user.getDn() == null) {
+			user.setDn(LdapUtils.emptyLdapName().add("uid=" +StringUtils.lowerCase( user.getCn()))); 
+		}			
 		User ret = findByUid(user.getUid());
 		if(ret == null)
 			return userRepository.save(user);

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.naming.InvalidNameException;
 import jakarta.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ruriel.ldap.dto.ResponseDTO;
+import com.ruriel.ldap.dto.UserDTO;
 import com.ruriel.ldap.model.User;
 import com.ruriel.ldap.repository.UserService;
 
@@ -30,9 +32,12 @@ public class UsersController {
 	@Operation(description ="Save User")
 	@RequestMapping(value = "/Users", method = RequestMethod.POST)
 	public ResponseDTO saveUser(
-			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "", content = @Content(schema = @Schema(implementation = User.class))) @Valid @RequestBody User user) {
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "", content = @Content(schema = @Schema(implementation = UserDTO.class))) @Valid @RequestBody UserDTO userDto) {
 		User ret;
 		try {
+			User user = new User();
+			BeanUtils.copyProperties(userDto, user);
+			user.setUid(userDto.getDn());
 			ret = service.create(user);
 		} catch (InvalidNameException e) {
 			e.printStackTrace();

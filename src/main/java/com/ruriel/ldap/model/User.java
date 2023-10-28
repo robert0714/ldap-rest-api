@@ -1,11 +1,14 @@
 package com.ruriel.ldap.model;
    
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties; 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import javax.naming.Name; 
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -17,23 +20,19 @@ import org.springframework.ldap.odm.annotations.Id;
 @NoArgsConstructor
 @Data
 @Entry(objectClasses = { "inetOrgPerson" })
-@JsonIgnoreProperties(value = { "dn" })
 public final class User implements Persistable<String> {
 
 	
 	@Id
 	private Name dn;
 	
-	@Schema(name ="dn", title = "DN", description = "Stands for domain component, which means that this string holds one component, a label of a DNS domain name." ,example = "marry")
 	@Attribute(name = "uid")
 	private String uid;
 	
-	@Schema(name ="cn", title = "CN", description = "Stands for common name.Composed from the givenName attribute, concatenated to the SN attribute." ,example = "Marry")
 	@Attribute(name = "cn")
 	private String cn;
 	
 	
-	@Schema(name ="sn", title = "SN", description = "Stands for surname (or last name)." ,example = "Doe")
 	@Attribute(name = "sn")
 	private String sn;
 	
