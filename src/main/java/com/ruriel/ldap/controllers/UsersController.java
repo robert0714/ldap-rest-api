@@ -3,7 +3,7 @@ package com.ruriel.ldap.controllers;
 import java.util.List;
 
 import javax.naming.InvalidNameException;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,14 +16,21 @@ import com.ruriel.ldap.dto.ResponseDTO;
 import com.ruriel.ldap.model.User;
 import com.ruriel.ldap.repository.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
+@Tag(name ="Users CRUD",description = "Modify LDAP Users..")
 @RestController
 public class UsersController {
 
 	@Autowired
 	UserService service;
 
+	@Operation(description ="Save User")
 	@RequestMapping(value = "/Users", method = RequestMethod.POST)
-	public ResponseDTO saveUser(@Valid @RequestBody User user) {
+	public ResponseDTO saveUser(
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "", content = @Content(schema = @Schema(implementation = User.class))) @Valid @RequestBody User user) {
 		User ret;
 		try {
 			ret = service.create(user);
@@ -40,7 +47,7 @@ public class UsersController {
 		}
 		return dto;
 	}
-
+	@Operation(description ="find all Users")
 	@RequestMapping(value = "/Users", method = RequestMethod.GET)
 	public ResponseDTO getUsers() {
 		ResponseDTO dto = new ResponseDTO();
@@ -57,7 +64,7 @@ public class UsersController {
 		}
 		return dto;
 	}
-
+	@Operation(description ="Find user by uid")
 	@RequestMapping(value = "/Users/{uid}", method = RequestMethod.GET)
 	public ResponseDTO getUser(@PathVariable(value = "uid") String uid) {
 		ResponseDTO dto = new ResponseDTO();
@@ -70,7 +77,7 @@ public class UsersController {
 		}
 		return dto;
 	}
-
+	@Operation(description ="Delete user by uid")
 	@RequestMapping(value = "/Users/{uid}", method = RequestMethod.DELETE)
 	public ResponseDTO deleteUser(@PathVariable(value = "uid") String uid) {
 		ResponseDTO dto = new ResponseDTO();

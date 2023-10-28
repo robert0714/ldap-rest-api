@@ -1,29 +1,27 @@
 package com.ruriel.ldap;
-
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-
+ 
 import java.util.List;
 
 import javax.naming.InvalidNameException;
 
-import org.junit.After;
+import static org.junit.jupiter.api.Assertions.*;
+ 
+ 
+import org.junit.jupiter.api.*; 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.boot.test.context.SpringBootTest; 
+ 
 import com.ruriel.ldap.model.User;
 import com.ruriel.ldap.repository.UserService;
 
-@SpringBootTest
+@SpringBootTest 
 class LdapRestApiApplicationTests {
 
 	@Autowired
 	private UserService userService;
 
-	@After
+	@AfterEach
 	void removeUser() {
 		userService.delete("Beta");
 	}
@@ -41,7 +39,7 @@ class LdapRestApiApplicationTests {
 			e.printStackTrace();
 			persisted = null;
 		}
-		assertThat(persisted, notNullValue());
+		assertNotNull(persisted);
 	}
 
 	@Test
@@ -56,7 +54,7 @@ class LdapRestApiApplicationTests {
 			e.printStackTrace();
 		}
 		User found = userService.findByUid(user.getUid());
-		assertThat(found, notNullValue());
+		assertNotNull(found );
 	}
 
 	@Test
@@ -87,6 +85,6 @@ class LdapRestApiApplicationTests {
 		}
 		userService.delete(user.getUid());
 		User found = userService.findByUid(user.getUid());
-		assertThat(found, nullValue());
+		assertNull(found );
 	}
 }

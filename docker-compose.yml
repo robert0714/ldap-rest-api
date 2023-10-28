@@ -1,0 +1,41 @@
+version: '3'
+services:
+  ldap:
+        image: bitnami/openldap:2.6.6
+        container_name: ldap
+        restart: unless-stopped
+        healthcheck:
+            test: "ldapsearch -x -b dc=techinterview,dc=com cn > /dev/null"
+            interval: 30s
+            retries: 2
+            timeout: 2s
+        environment:
+            LDAP_ORGANISATION:  "My Company"
+            LDAP_ROOT: "dc=techinterview,dc=com"
+            LDAP_ADMIN_PASSWORD: "123456"
+            LDAP_PORT_NUMBER: 389
+        ports:
+            - 389:389
+  ldap-ui:
+        image: dnknth/ldap-ui
+        container_name: ldap-ui
+        ports:
+            - 5000:5000
+        links:
+          - ldap
+        environment:
+            LDAP_URL: "${LDAP_URL:-ldap://ldap/}"
+            USE_TLS: ${USE_TLS:-}
+            INSECURE_TLS: ${INSECURE_TLS:-}
+            BASE_DN: "${BASE_DN:-dc=techinterview,dc=com}"
+            BIND_DN: "${BIND_DN:-cn=admin,dc=techinterview,dc=com}"
+            BIND_PASSWORD: "${BIND_PASSWORD:-123456}"
+        restart: unless-stopped
+        healthcheck:
+            test: "wget -q -O /dev/null http://localhost:5000"
+            interval: 30s
+            retries: 2
+            timeout: 2s
+
+
+               

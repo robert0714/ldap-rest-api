@@ -7,7 +7,7 @@ The following project consists in a Restful API written in Java for creation, se
 The project has been developed and tested with the following:
 
     -Maven 3.6
-    -Java 1.8.0-221
+    -Java 17
     -Docker 2.1.0.5
 To see the results, install OpenLDAP Server (LDAPAdmin in case you're using Windows)
 
@@ -15,7 +15,9 @@ To see the results, install OpenLDAP Server (LDAPAdmin in case you're using Wind
 ##### 1-LDAP Server Setup
 Clone the following repository  https://github.com/osixia/docker-openldap and run it on docker with the following command:
 
-	docker run --env LDAP_ORGANISATION="My Company" --env LDAP_DOMAIN="techinterview.com" --env LDAP_ADMIN_PASSWORD="123456" -p 389:389 --detach osixia/openldap:1.3.0
+	docker run --env LDAP_ORGANISATION="My Company" --env LDAP_DOMAIN="techinterview.com" --env LDAP_ADMIN_PASSWORD="123456" -p 389:389 --detach --name ldap-server osixia/openldap:1.5.0
+	
+	docker run --env LDAP_ORGANISATION="My Company" --env LDAP_ROOT="dc=techinterview,dc=com"  --env LDAP_ADMIN_PASSWORD="123456"  --env LDAP_PORT_NUMBER=389   -p 389:389 --detach --name ldap-server  bitnami/openldap:2.6.6
 
 ##### 2-OU creation on the domain:
 Create a **create_ou_users.ldif** file and fill it with the following content:
@@ -29,7 +31,12 @@ Create a **create_ou_users.ldif** file and fill it with the following content:
 
 Run the following command:
 
+    docker exec -it ldap-server bash
+	docker exec -it  --user "1000:1000" ldap-server bash
+
 	ldapmodify -h localhost -p 389 -w '123456' -D 'cn=admin,dc=techinterview,dc=com'  <  create_ou_users.ldif
+
+	ldapmodify -H ldap://localhost:389 -w '123456' -D 'cn=admin,dc=techinterview,dc=com'  <  create_ou_users.ldif
 
 Check the Open LDAP Server to see if the OU has been created.
 
@@ -133,3 +140,8 @@ Response Payload:
 		"users": []
 	}
 
+## swagger
+* http://localhost:8080/swagger-ui/index.html
+
+## ldap-ui
+* http://10.100.198.101:5000/
